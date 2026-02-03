@@ -1,0 +1,3007 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="description" content="SurgeryPrep - Ihre persönliche OP-Vorbereitung">
+    <title>SurgeryPrep 🏥</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            
+            --bg-main: #f0f4ff;
+            --bg-card: #ffffff;
+            --bg-elevated: #ffffff;
+            --text-primary: #1e1b4b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border: rgba(99, 102, 241, 0.15);
+            --shadow: 0 4px 24px rgba(99, 102, 241, 0.12);
+            --shadow-lg: 0 8px 40px rgba(99, 102, 241, 0.18);
+            
+            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+            --gradient-card: linear-gradient(145deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+            --gradient-glow: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15) 0%, transparent 50%);
+            
+            --radius-sm: 12px;
+            --radius-md: 20px;
+            --radius-lg: 28px;
+            --radius-full: 50px;
+            
+            --nav-height: 80px;
+            --header-height: 60px;
+        }
+
+        [data-theme="dark"] {
+            --bg-main: #0f0d1a;
+            --bg-card: rgba(30, 27, 75, 0.6);
+            --bg-elevated: rgba(40, 35, 90, 0.8);
+            --text-primary: #f1f5f9;
+            --text-secondary: #a5b4fc;
+            --text-muted: #6366f1;
+            --border: rgba(139, 92, 246, 0.2);
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 8px 40px rgba(139, 92, 246, 0.15);
+            --gradient-card: linear-gradient(145deg, rgba(30, 27, 75, 0.8) 0%, rgba(20, 18, 50, 0.9) 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.4s ease, color 0.3s ease;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60vh;
+            background: var(--gradient-glow);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        [data-theme="dark"] body::before {
+            background: radial-gradient(ellipse at 50% -20%, rgba(139, 92, 246, 0.2) 0%, transparent 60%);
+        }
+
+        /* ========== UTILITY CLASSES ========== */
+        .hidden { display: none !important; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+
+        /* ========== APP CONTAINER ========== */
+        .app-container {
+            position: relative;
+            z-index: 1;
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            padding-bottom: calc(var(--nav-height) + 20px);
+        }
+
+        /* ========== HEADER ========== */
+        .app-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 16px 20px;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .app-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .app-logo span {
+            font-size: 1.5rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .theme-toggle {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-sm);
+            border: none;
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow);
+        }
+
+        /* ========== SCREENS ========== */
+        .screen {
+            padding: 20px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.5); }
+        }
+
+        /* ========== ONBOARDING ========== */
+        .onboarding-screen {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
+
+        .onboarding-progress {
+            padding: 20px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .progress-dot {
+            flex: 1;
+            height: 4px;
+            border-radius: 2px;
+            background: var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.active {
+            background: var(--gradient-primary);
+        }
+
+        .progress-dot.completed {
+            background: var(--success);
+        }
+
+        .onboarding-content {
+            flex: 1;
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .onboarding-hero {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .onboarding-emoji {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            animation: pulse 2s ease infinite;
+        }
+
+        .onboarding-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .onboarding-subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .form-label .emoji {
+            font-size: 1.2rem;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px;
+            background: var(--bg-elevated);
+            border-radius: var(--radius-md);
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-group:hover {
+            background: var(--bg-card);
+            box-shadow: var(--shadow);
+        }
+
+        .custom-checkbox {
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            margin-top: 2px;
+        }
+
+        .checkbox-group input:checked + .custom-checkbox {
+            background: var(--gradient-primary);
+            border-color: transparent;
+        }
+
+        .checkbox-group input:checked + .custom-checkbox::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+        }
+
+        .checkbox-group input {
+            display: none;
+        }
+
+        .checkbox-label {
+            flex: 1;
+        }
+
+        .checkbox-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .checkbox-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .onboarding-nav {
+            padding: 20px 24px;
+            display: flex;
+            gap: 12px;
+        }
+
+        /* ========== BUTTONS ========== */
+        .btn {
+            padding: 16px 28px;
+            border: none;
+            border-radius: var(--radius-full);
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        .btn-lg {
+            padding: 18px 32px;
+            font-size: 1.1rem;
+        }
+
+        /* ========== DASHBOARD ========== */
+        .dashboard-hero {
+            background: var(--gradient-primary);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            animation: glow 3s ease infinite;
+        }
+
+        .dashboard-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+
+        .countdown-label {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .countdown-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 4rem;
+            font-weight: 700;
+            color: white;
+            line-height: 1;
+        }
+
+        .countdown-unit {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        .countdown-date {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.9);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-link {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .quick-action {
+            background: var(--gradient-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quick-action:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .quick-action-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .quick-action-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .task-preview {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .task-preview-item {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .task-preview-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-preview-item:hover {
+            background: var(--bg-elevated);
+        }
+
+        .task-day-badge {
+            min-width: 48px;
+            padding: 6px 12px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-sm);
+            color: white;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        .task-day-badge.today {
+            background: var(--warning);
+            animation: pulse 1.5s ease infinite;
+        }
+
+        .task-day-badge.past {
+            background: var(--text-muted);
+        }
+
+        .task-preview-content {
+            flex: 1;
+        }
+
+        .task-preview-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .task-preview-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* ========== TIMELINE ========== */
+        .timeline-header {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .progress-bar-container {
+            margin-bottom: 16px;
+        }
+
+        .progress-bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 6px;
+            transition: width 0.5s ease;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-tab {
+            padding: 10px 18px;
+            border: none;
+            border-radius: var(--radius-full);
+            background: transparent;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-tab.active {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        /* Visual Timeline */
+        .visual-timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 16px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+            border-radius: 2px;
+        }
+
+        .timeline-phase {
+            margin-bottom: 24px;
+        }
+
+        .timeline-phase-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -32px;
+            width: 24px;
+            height: 24px;
+            background: var(--bg-card);
+            border: 4px solid var(--primary);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .timeline-dot.today {
+            background: var(--warning);
+            border-color: var(--warning);
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+            animation: pulse 1.5s ease infinite;
+        }
+
+        .timeline-dot.completed {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .timeline-dot.op-day {
+            background: var(--secondary);
+            border-color: var(--secondary);
+            width: 32px;
+            height: 32px;
+            left: -36px;
+            box-shadow: 0 0 30px rgba(236, 72, 153, 0.5);
+        }
+
+        .phase-label {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .phase-date {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .timeline-task {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-task:hover {
+            box-shadow: var(--shadow);
+            transform: translateX(4px);
+        }
+
+        .timeline-task.completed {
+            opacity: 0.7;
+            background: var(--bg-elevated);
+        }
+
+        .timeline-task.completed .task-title {
+            text-decoration: line-through;
+        }
+
+        .task-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .task-checkbox {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .task-checkbox.checked {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .task-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .task-note {
+            margin-top: 12px;
+            padding: 12px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+        }
+
+        .task-note-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px dashed var(--border);
+            border-radius: var(--radius-sm);
+            background: transparent;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            resize: none;
+            margin-top: 8px;
+        }
+
+        .task-note-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .add-note-btn {
+            margin-top: 8px;
+            padding: 8px 14px;
+            border: none;
+            background: transparent;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        /* Fasting Reminder */
+        .fasting-reminder {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
+            border: 2px solid var(--warning);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .fasting-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .fasting-rules {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .fasting-rule {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border-radius: var(--radius-sm);
+        }
+
+        .fasting-icon {
+            font-size: 1.5rem;
+        }
+
+        .fasting-text strong {
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .fasting-text span {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* ========== OP INFO ========== */
+        .info-tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .info-tab {
+            padding: 12px 20px;
+            border: none;
+            border-radius: var(--radius-full);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        .info-tab.active {
+            background: var(--gradient-primary);
+            color: white;
+            border-color: transparent;
+        }
+
+        .info-content {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .info-section {
+            margin-bottom: 20px;
+        }
+
+        .info-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-list {
+            list-style: none;
+        }
+
+        .info-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            line-height: 1.5;
+        }
+
+        .info-list li:last-child {
+            border-bottom: none;
+        }
+
+        .info-list li::before {
+            content: '•';
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .info-disclaimer {
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .info-disclaimer-icon {
+            font-size: 1.3rem;
+        }
+
+        /* ========== WARNING SIGNS ========== */
+        .emergency-banner {
+            background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        .emergency-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .emergency-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            background: white;
+            color: var(--danger);
+            border-radius: var(--radius-full);
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            margin-top: 12px;
+            transition: transform 0.2s ease;
+        }
+
+        .emergency-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .warning-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .warning-card:hover {
+            box-shadow: var(--shadow);
+            border-color: var(--warning);
+        }
+
+        .warning-icon {
+            font-size: 1.5rem;
+        }
+
+        .warning-content h4 {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .warning-content p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .clinic-call-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 18px;
+            background: var(--bg-card);
+            border: 2px solid var(--primary);
+            border-radius: var(--radius-lg);
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .clinic-call-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* ========== DOCUMENTS ========== */
+        .document-section {
+            margin-bottom: 24px;
+        }
+
+        .document-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .document-item {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .document-item:last-child {
+            border-bottom: none;
+        }
+
+        .document-item:hover {
+            background: var(--bg-elevated);
+        }
+
+        .document-checkbox {
+            width: 26px;
+            height: 26px;
+            min-width: 26px;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .document-item.checked .document-checkbox {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .document-icon {
+            font-size: 1.3rem;
+        }
+
+        .document-label {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .print-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        /* ========== SETTINGS ========== */
+        .settings-section {
+            margin-bottom: 24px;
+        }
+
+        .settings-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .settings-item {
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-label {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .settings-icon {
+            font-size: 1.4rem;
+        }
+
+        .settings-text h4 {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .settings-text p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 56px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--border);
+            border-radius: 15px;
+            transition: 0.3s;
+        }
+
+        .toggle-slider::before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--gradient-primary);
+        }
+
+        .toggle-switch input:checked + .toggle-slider::before {
+            transform: translateX(26px);
+        }
+
+        .storage-info {
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .storage-info-icon {
+            font-size: 1.3rem;
+        }
+
+        .storage-info p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* ========== BOTTOM NAVIGATION ========== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: var(--nav-height);
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+            padding-bottom: env(safe-area-inset-bottom, 0);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item:active {
+            transform: scale(0.95);
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-item.active .nav-icon {
+            transform: translateY(-2px);
+        }
+
+        .nav-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* ========== MODAL ========== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 2000;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            padding: 24px;
+            width: 100%;
+            max-width: 480px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: var(--bg-elevated);
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ========== TOAST ========== */
+        .toast {
+            position: fixed;
+            bottom: calc(var(--nav-height) + 20px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-primary);
+            color: var(--bg-main);
+            padding: 14px 24px;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            z-index: 3000;
+            animation: slideUp 0.3s ease, fadeOut 0.3s ease 2.7s;
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; transform: translate(-50%, 20px); }
+        }
+
+        /* ========== HELP TOOLTIP ========== */
+        .help-btn {
+            position: fixed;
+            right: 20px;
+            bottom: calc(var(--nav-height) + 20px);
+            width: 56px;
+            height: 56px;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            z-index: 900;
+            transition: transform 0.3s ease;
+        }
+
+        .help-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* ========== PRINT STYLES ========== */
+        @media print {
+            .app-header, .bottom-nav, .help-btn, .modal-overlay {
+                display: none !important;
+            }
+            .app-container {
+                max-width: 100%;
+                padding: 20px;
+            }
+            .screen {
+                display: block !important;
+            }
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (min-width: 768px) {
+            .app-container {
+                padding-top: 20px;
+            }
+            .bottom-nav {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="app">
+        <!-- Content will be rendered by JavaScript -->
+    </div>
+
+    <script>
+        // ========== DATA & STATE ==========
+        const APP_KEY = 'surgeryprep_data';
+        
+        const DEFAULT_STATE = {
+            currentScreen: 'onboarding',
+            onboardingStep: 0,
+            profile: {
+                opDate: '',
+                opType: 'general',
+                hospitalName: '',
+                hospitalPhone: '',
+                emergencyContact: '',
+                notifications: false,
+                disclaimerAccepted: false,
+                privacyAccepted: false
+            },
+            tasks: [],
+            documents: [],
+            theme: 'light',
+            setupComplete: false
+        };
+
+        const OP_TYPES = {
+            general: { name: 'Allgemein (Standard)', emoji: '🏥' },
+            knee: { name: 'Kniearthroskopie', emoji: '🦵' },
+            hernia: { name: 'Leistenhernie', emoji: '💪' },
+            gallbladder: { name: 'Gallenblase (laparoskopisch)', emoji: '🫀' }
+        };
+
+        const TIMELINE_TEMPLATES = {
+            general: [
+                { day: -14, tasks: [
+                    { id: 'g1', title: '📋 Unterlagen sammeln', desc: 'Einweisung, Vorbefunde und Krankenakte zusammenstellen' },
+                    { id: 'g2', title: '💊 Medikamentenliste erstellen', desc: 'Alle Medikamente und Allergien notieren' }
+                ]},
+                { day: -7, tasks: [
+                    { id: 'g3', title: '🚗 Transport organisieren', desc: 'Abholung und Heimweg planen (Sie dürfen nach der OP nicht selbst fahren)' },
+                    { id: 'g4', title: '❓ Fragen notieren', desc: 'Offene Fragen für das Behandlungsteam aufschreiben' }
+                ]},
+                { day: -3, tasks: [
+                    { id: 'g5', title: '🏠 Haushalt vorbereiten', desc: 'Einkaufen, einfache Mahlzeiten vorbereiten' },
+                    { id: 'g6', title: '👕 Kleidung bereitlegen', desc: 'Bequeme, lockere Kleidung für den OP-Tag' }
+                ]},
+                { day: -1, tasks: [
+                    { id: 'g7', title: '✅ Letzte Absprachen', desc: 'Uhrzeit, Ort und Nüchternheit bestätigen' },
+                    { id: 'g8', title: '🛁 Körperhygiene', desc: 'Duschen, kein Nagellack, kein Make-up' }
+                ]},
+                { day: 0, tasks: [
+                    { id: 'g9', title: '⏰ Pünktlich ankommen', desc: 'Zeitpuffer einplanen (mind. 30 Min. vorher)' },
+                    { id: 'g10', title: '💍 Schmuck ablegen', desc: 'Schmuck, Piercings, Kontaktlinsen zu Hause lassen' }
+                ]},
+                { day: 1, tasks: [
+                    { id: 'g11', title: '🛋️ Schonung', desc: 'Ruhen und Warnzeichen beachten' },
+                    { id: 'g12', title: '💧 Flüssigkeit', desc: 'Ausreichend trinken (nach Anweisung)' }
+                ]},
+                { day: 7, tasks: [
+                    { id: 'g13', title: '🏥 Kontrolltermin', desc: 'Termin für Nachsorge/Verbandswechsel prüfen' }
+                ]}
+            ],
+            knee: [
+                { day: -14, tasks: [
+                    { id: 'k1', title: '📋 Unterlagen sammeln', desc: 'Einweisung, MRT-Bilder, Vorbefunde' },
+                    { id: 'k2', title: '💊 Medikamentenliste', desc: 'Blutverdünner besonders notieren!' }
+                ]},
+                { day: -7, tasks: [
+                    { id: 'k3', title: '🚗 Transport organisieren', desc: 'Sie werden Gehstützen brauchen!' },
+                    { id: 'k4', title: '🦯 Gehstützen besorgen', desc: 'Falls nicht von Klinik gestellt' },
+                    { id: 'k5', title: '❓ Fragen notieren', desc: 'Besonders zur Nachbehandlung' }
+                ]},
+                { day: -3, tasks: [
+                    { id: 'k6', title: '🏠 Wohnung anpassen', desc: 'Stolperfallen entfernen, Hilfsmittel bereitlegen' },
+                    { id: 'k7', title: '🧊 Kühlpacks besorgen', desc: 'Für die Kühlung nach der OP' }
+                ]},
+                { day: -1, tasks: [
+                    { id: 'k8', title: '✅ Letzte Absprachen', desc: 'Nüchternheit und Medikamente klären' },
+                    { id: 'k9', title: '👖 Weite Hose einpacken', desc: 'Für nach der OP mit Verband' }
+                ]},
+                { day: 0, tasks: [
+                    { id: 'k10', title: '⏰ Pünktlich da sein', desc: '30 Min. vor dem Termin' },
+                    { id: 'k11', title: '💍 Schmuck ablegen', desc: 'Alles zu Hause lassen' }
+                ]},
+                { day: 1, tasks: [
+                    { id: 'k12', title: '🧊 Knie kühlen', desc: '20 Min. alle 2 Std. (nach Anweisung)' },
+                    { id: 'k13', title: '🦵 Bein hochlagern', desc: 'Schwellung vorbeugen' }
+                ]},
+                { day: 7, tasks: [
+                    { id: 'k14', title: '🏥 Kontrolltermin', desc: 'Fäden ziehen/Nachuntersuchung' },
+                    { id: 'k15', title: '🏋️ Physiotherapie', desc: 'Termin für Reha klären' }
+                ]}
+            ],
+            hernia: [
+                { day: -14, tasks: [
+                    { id: 'h1', title: '📋 Unterlagen sammeln', desc: 'Einweisung und Vorbefunde' },
+                    { id: 'h2', title: '💊 Medikamentenliste', desc: 'Alle Medikamente notieren' }
+                ]},
+                { day: -7, tasks: [
+                    { id: 'h3', title: '🚗 Transport planen', desc: 'Abholung und Heimweg' },
+                    { id: 'h4', title: '❓ Fragen notieren', desc: 'Zur Schonung nach OP' }
+                ]},
+                { day: -3, tasks: [
+                    { id: 'h5', title: '🏠 Haushalt vorbereiten', desc: 'Schwere Gegenstände erreichbar platzieren' },
+                    { id: 'h6', title: '👕 Lockere Kleidung', desc: 'Nichts Enges am Bauch' }
+                ]},
+                { day: -1, tasks: [
+                    { id: 'h7', title: '✅ Nüchternheit klären', desc: 'Ab wann nichts mehr essen/trinken' },
+                    { id: 'h8', title: '🛁 Rasur nach Anweisung', desc: 'Falls von Klinik gewünscht' }
+                ]},
+                { day: 0, tasks: [
+                    { id: 'h9', title: '⏰ Pünktlich da sein', desc: 'Zeitpuffer einplanen' },
+                    { id: 'h10', title: '💍 Schmuck ablegen', desc: 'Zu Hause lassen' }
+                ]},
+                { day: 1, tasks: [
+                    { id: 'h11', title: '🚶 Leicht bewegen', desc: 'Kurze Spaziergänge erlaubt' },
+                    { id: 'h12', title: '⚠️ Nicht heben', desc: 'Keine Lasten über 5kg!' }
+                ]},
+                { day: 7, tasks: [
+                    { id: 'h13', title: '🏥 Kontrolltermin', desc: 'Wundheilung prüfen lassen' }
+                ]}
+            ],
+            gallbladder: [
+                { day: -14, tasks: [
+                    { id: 'gb1', title: '📋 Unterlagen sammeln', desc: 'Einweisung, Ultraschall-Bilder' },
+                    { id: 'gb2', title: '💊 Medikamentenliste', desc: 'Besonders Blutverdünner notieren' }
+                ]},
+                { day: -7, tasks: [
+                    { id: 'gb3', title: '🚗 Transport organisieren', desc: 'Für Hin- und Rückweg' },
+                    { id: 'gb4', title: '🥗 Ernährung umstellen', desc: 'Fettarme Kost bevorzugen' }
+                ]},
+                { day: -3, tasks: [
+                    { id: 'gb5', title: '🏠 Haushalt vorbereiten', desc: 'Leichte Mahlzeiten vorbereiten' },
+                    { id: 'gb6', title: '👕 Lockere Kleidung', desc: 'Nichts Enges am Bauch' }
+                ]},
+                { day: -1, tasks: [
+                    { id: 'gb7', title: '✅ Nüchternheit klären', desc: 'Letzte Mahlzeit planen' },
+                    { id: 'gb8', title: '🛁 Duschen', desc: 'Kein Bodylotion verwenden' }
+                ]},
+                { day: 0, tasks: [
+                    { id: 'gb9', title: '⏰ Pünktlich da sein', desc: 'Zeitpuffer einplanen' },
+                    { id: 'gb10', title: '💍 Schmuck ablegen', desc: 'Zu Hause lassen' }
+                ]},
+                { day: 1, tasks: [
+                    { id: 'gb11', title: '🥣 Leichte Kost', desc: 'Schonkost nach Anweisung' },
+                    { id: 'gb12', title: '🚶 Mobilisation', desc: 'Frühes Aufstehen wichtig' }
+                ]},
+                { day: 7, tasks: [
+                    { id: 'gb13', title: '🏥 Kontrolltermin', desc: 'Wundheilung prüfen' },
+                    { id: 'gb14', title: '🥗 Ernährung anpassen', desc: 'Fettarme Kost fortsetzen' }
+                ]}
+            ]
+        };
+
+        const DOCUMENTS_CHECKLIST = [
+            { id: 'd1', label: 'Personalausweis / Reisepass', icon: '🪪' },
+            { id: 'd2', label: 'Krankenversicherungskarte', icon: '💳' },
+            { id: 'd3', label: 'Einweisungsschein', icon: '📄' },
+            { id: 'd4', label: 'Medikamentenliste', icon: '💊' },
+            { id: 'd5', label: 'Vorbefunde / Röntgenbilder', icon: '🩻' },
+            { id: 'd6', label: 'Allergiepass (falls vorhanden)', icon: '⚠️' },
+            { id: 'd7', label: 'Bequeme Kleidung', icon: '👕' },
+            { id: 'd8', label: 'Hausschuhe', icon: '🥿' },
+            { id: 'd9', label: 'Handy & Ladegerät', icon: '📱' },
+            { id: 'd10', label: 'Brille / Kontaktlinsenbehälter', icon: '👓' }
+        ];
+
+        const WARNING_SIGNS = [
+            { title: 'Starke Blutung', desc: 'Blut durchnässt den Verband schnell', icon: '🩸' },
+            { title: 'Hohes Fieber', desc: 'Temperatur über 38,5°C', icon: '🌡️' },
+            { title: 'Atemnot', desc: 'Plötzliche Schwierigkeiten beim Atmen', icon: '😮‍💨' },
+            { title: 'Starke Schmerzen', desc: 'Schmerzen, die mit Medikamenten nicht besser werden', icon: '😣' },
+            { title: 'Rötung / Schwellung', desc: 'Zunehmende Rötung oder Schwellung um die Wunde', icon: '🔴' },
+            { title: 'Brustschmerzen', desc: 'Druck oder Schmerzen in der Brust', icon: '💔' },
+            { title: 'Verwirrtheit', desc: 'Plötzliche Verwirrung oder Orientierungslosigkeit', icon: '😵' },
+            { title: 'Übelkeit / Erbrechen', desc: 'Anhaltendes Erbrechen über mehrere Stunden', icon: '🤢' }
+        ];
+
+        const OP_INFO = {
+            general: {
+                ablauf: [
+                    'Sie kommen nüchtern in die Klinik',
+                    'Aufnahme und Vorbereitung durch das Pflegeteam',
+                    'Gespräch mit dem Anästhesisten',
+                    'Die OP wird durchgeführt',
+                    'Aufwachraum zur Überwachung',
+                    'Verlegung auf Station oder Entlassung'
+                ],
+                vorbereitung: [
+                    'Nüchtern erscheinen (nach Anweisung)',
+                    'Medikamente nur nach Absprache nehmen',
+                    'Kein Alkohol 24h vor der OP',
+                    'Nicht rauchen (mindestens 24h vorher)',
+                    'Alle Unterlagen mitbringen',
+                    'Begleitperson für den Heimweg organisieren'
+                ],
+                nachsorge: [
+                    'Wundpflege nach Anweisung',
+                    'Schmerzmittel nur wie verordnet nehmen',
+                    'Körperliche Schonung beachten',
+                    'Kontrolltermine einhalten',
+                    'Bei Warnzeichen sofort melden',
+                    'Krankschreibung beim Arbeitgeber einreichen'
+                ],
+                fragen: [
+                    { q: 'Wann darf ich wieder duschen?', a: 'In der Regel nach 24-48h mit wasserfestem Pflaster – fragen Sie Ihr Behandlungsteam.' },
+                    { q: 'Wann darf ich wieder Auto fahren?', a: 'Frühestens 24h nach einer Narkose und wenn Sie keine Schmerzmittel mehr nehmen.' },
+                    { q: 'Wann kann ich wieder arbeiten?', a: 'Das hängt von der OP und Ihrem Beruf ab – besprechen Sie es mit Ihrem Arzt.' }
+                ]
+            },
+            knee: {
+                ablauf: [
+                    'Aufnahme und Narkosevorbereitung',
+                    'Meist Regional- oder Vollnarkose',
+                    'Arthroskopie über kleine Schnitte',
+                    'OP dauert meist 30-60 Minuten',
+                    'Aufwachraum mit Kühlmanschette',
+                    'Noch am gleichen Tag nach Hause'
+                ],
+                vorbereitung: [
+                    'Gehstützen bereithalten',
+                    'Weite Hose für nach der OP',
+                    'Kühlpacks zu Hause haben',
+                    'Stolperfallen in der Wohnung entfernen',
+                    'Physiotherapie vorab klären'
+                ],
+                nachsorge: [
+                    'Knie regelmäßig kühlen',
+                    'Bein hochlagern',
+                    'Gehstützen nach Anweisung nutzen',
+                    'Physiotherapie beginnen',
+                    'Langsam Belastung steigern'
+                ],
+                fragen: [
+                    { q: 'Wie lange brauche ich Gehstützen?', a: 'Je nach Eingriff 1-14 Tage – Ihr Arzt gibt Ihnen genaue Anweisungen.' },
+                    { q: 'Wann kann ich wieder Sport machen?', a: 'Leichte Aktivität nach ca. 2-4 Wochen, volle Belastung oft erst nach Monaten.' }
+                ]
+            },
+            hernia: {
+                ablauf: [
+                    'Meist Vollnarkose',
+                    'OP dauert ca. 30-60 Minuten',
+                    'Einsetzen eines Netzes zur Verstärkung',
+                    'Oft ambulant möglich',
+                    'Kurze Überwachung, dann Entlassung'
+                ],
+                vorbereitung: [
+                    'Nüchtern erscheinen',
+                    'Rasur wird oft vor Ort gemacht',
+                    'Lockere Kleidung mitnehmen',
+                    'Keine schweren Arbeiten planen'
+                ],
+                nachsorge: [
+                    'Wunde trocken halten',
+                    'Keine schweren Lasten heben (4-6 Wochen)',
+                    'Leichte Bewegung fördert Heilung',
+                    'Bei Rötung/Schwellung melden',
+                    'Verstopfung vermeiden'
+                ],
+                fragen: [
+                    { q: 'Wann darf ich wieder heben?', a: 'Leichte Lasten nach 2 Wochen, schwere erst nach 4-6 Wochen.' },
+                    { q: 'Kann die Hernie wiederkommen?', a: 'Mit modernen Netzen ist das Risiko sehr gering (<1-2%).' }
+                ]
+            },
+            gallbladder: {
+                ablauf: [
+                    'Vollnarkose erforderlich',
+                    'Laparoskopisch über 3-4 kleine Schnitte',
+                    'OP dauert ca. 30-60 Minuten',
+                    'Oft 1 Nacht im Krankenhaus',
+                    'Bei Komplikationen längerer Aufenthalt möglich'
+                ],
+                vorbereitung: [
+                    'Streng nüchtern erscheinen',
+                    'Fettarme Kost in den Tagen vorher',
+                    'Lockere Kleidung mitnehmen',
+                    'Übernachtungstasche packen'
+                ],
+                nachsorge: [
+                    'Fettarme Ernährung für 4-6 Wochen',
+                    'Kleine Mahlzeiten bevorzugen',
+                    'Körperliche Schonung',
+                    'Schulterschmerzen können auftreten (Gas)',
+                    'Langsam wieder normale Kost'
+                ],
+                fragen: [
+                    { q: 'Kann ich ohne Gallenblase leben?', a: 'Ja, die Leber produziert weiter Galle – Sie können normal essen.' },
+                    { q: 'Warum Schulterschmerzen?', a: 'Das Gas der OP kann den Zwerchfell-Nerv reizen – verschwindet nach 1-2 Tagen.' }
+                ]
+            }
+        };
+
+        // ========== STATE MANAGEMENT ==========
+        let state = loadState();
+
+        function loadState() {
+            try {
+                const saved = localStorage.getItem(APP_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    return { ...DEFAULT_STATE, ...parsed };
+                }
+            } catch (e) {
+                console.error('Error loading state:', e);
+            }
+            return { ...DEFAULT_STATE };
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem(APP_KEY, JSON.stringify(state));
+            } catch (e) {
+                console.error('Error saving state:', e);
+            }
+        }
+
+        function setState(updates) {
+            state = { ...state, ...updates };
+            saveState();
+            render();
+        }
+
+        // ========== UTILITY FUNCTIONS ==========
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        }
+
+        function getDaysUntilOp() {
+            if (!state.profile.opDate) return null;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const opDate = new Date(state.profile.opDate);
+            opDate.setHours(0, 0, 0, 0);
+            const diff = opDate - today;
+            return Math.ceil(diff / (1000 * 60 * 60 * 24));
+        }
+
+        function getDateForDay(dayOffset) {
+            if (!state.profile.opDate) return null;
+            const opDate = new Date(state.profile.opDate);
+            opDate.setDate(opDate.getDate() + dayOffset);
+            return opDate;
+        }
+
+        function generateTasks() {
+            const template = TIMELINE_TEMPLATES[state.profile.opType] || TIMELINE_TEMPLATES.general;
+            const tasks = [];
+            
+            template.forEach(phase => {
+                phase.tasks.forEach(task => {
+                    const existingTask = state.tasks.find(t => t.id === task.id);
+                    tasks.push({
+                        ...task,
+                        day: phase.day,
+                        completed: existingTask ? existingTask.completed : false,
+                        note: existingTask ? existingTask.note : ''
+                    });
+                });
+            });
+            
+            return tasks;
+        }
+
+        function toggleTask(taskId) {
+            const tasks = state.tasks.map(t => 
+                t.id === taskId ? { ...t, completed: !t.completed } : t
+            );
+            setState({ tasks });
+            showToast('Aufgabe aktualisiert ✓');
+        }
+
+        function updateTaskNote(taskId, note) {
+            const tasks = state.tasks.map(t => 
+                t.id === taskId ? { ...t, note } : t
+            );
+            setState({ tasks });
+        }
+
+        function toggleDocument(docId) {
+            const documents = state.documents.includes(docId)
+                ? state.documents.filter(d => d !== docId)
+                : [...state.documents, docId];
+            setState({ documents });
+        }
+
+        function showToast(message) {
+            const existing = document.querySelector('.toast');
+            if (existing) existing.remove();
+            
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function toggleTheme() {
+            const newTheme = state.theme === 'light' ? 'dark' : 'light';
+            setState({ theme: newTheme });
+            document.documentElement.setAttribute('data-theme', newTheme);
+        }
+
+        // ========== RENDER FUNCTIONS ==========
+        function render() {
+            document.documentElement.setAttribute('data-theme', state.theme);
+            
+            const app = document.getElementById('app');
+            
+            if (!state.setupComplete) {
+                app.innerHTML = renderOnboarding();
+            } else {
+                app.innerHTML = `
+                    ${renderHeader()}
+                    ${renderCurrentScreen()}
+                    ${renderBottomNav()}
+                `;
+            }
+            
+            attachEventListeners();
+        }
+
+        function renderHeader() {
+            return `
+                <header class="app-header">
+                    <div class="app-logo">
+                        <span>🏥</span>
+                        SurgeryPrep
+                    </div>
+                    <div class="header-actions">
+                        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Design wechseln">
+                            ${state.theme === 'light' ? '🌙' : '☀️'}
+                        </button>
+                    </div>
+                </header>
+            `;
+        }
+
+        function renderOnboarding() {
+            const steps = [
+                {
+                    emoji: '👋',
+                    title: 'Willkommen bei SurgeryPrep!',
+                    subtitle: 'Ihre persönliche Begleitung für die OP-Vorbereitung. In wenigen Schritten richten wir alles für Sie ein.',
+                    content: `
+                        <div class="checkbox-group" onclick="this.querySelector('input').click()">
+                            <input type="checkbox" id="disclaimer" ${state.profile.disclaimerAccepted ? 'checked' : ''}>
+                            <div class="custom-checkbox"></div>
+                            <div class="checkbox-label">
+                                <div class="checkbox-title">⚕️ Medizinischer Hinweis</div>
+                                <div class="checkbox-desc">Diese App gibt allgemeine Informationen und ersetzt keine ärztliche Beratung. Bei Fragen wenden Sie sich immer an Ihr Behandlungsteam.</div>
+                            </div>
+                        </div>
+                        <div class="checkbox-group" onclick="this.querySelector('input').click()">
+                            <input type="checkbox" id="privacy" ${state.profile.privacyAccepted ? 'checked' : ''}>
+                            <div class="custom-checkbox"></div>
+                            <div class="checkbox-label">
+                                <div class="checkbox-title">🔒 Datenschutz</div>
+                                <div class="checkbox-desc">Alle Daten werden nur lokal auf Ihrem Gerät gespeichert. Es findet keine Übertragung an Server statt. Sie können Ihre Daten jederzeit löschen.</div>
+                            </div>
+                        </div>
+                    `
+                },
+                {
+                    emoji: '📅',
+                    title: 'Wann ist Ihre OP?',
+                    subtitle: 'Basierend auf dem Datum erstellen wir Ihre persönliche Timeline.',
+                    content: `
+                        <div class="form-group">
+                            <label class="form-label"><span class="emoji">📅</span> OP-Datum</label>
+                            <input type="date" class="form-input" id="opDate" value="${state.profile.opDate}" min="${new Date().toISOString().split('T')[0]}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><span class="emoji">🏥</span> Art der Operation</label>
+                            <select class="form-select" id="opType">
+                                ${Object.entries(OP_TYPES).map(([key, val]) => 
+                                    `<option value="${key}" ${state.profile.opType === key ? 'selected' : ''}>${val.emoji} ${val.name}</option>`
+                                ).join('')}
+                            </select>
+                        </div>
+                    `
+                },
+                {
+                    emoji: '📞',
+                    title: 'Kontaktdaten (optional)',
+                    subtitle: 'Diese Infos helfen Ihnen, im Notfall schnell Hilfe zu bekommen.',
+                    content: `
+                        <div class="form-group">
+                            <label class="form-label"><span class="emoji">🏥</span> Krankenhaus / Klinik</label>
+                            <input type="text" class="form-input" id="hospitalName" placeholder="z.B. Städtisches Klinikum" value="${state.profile.hospitalName}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><span class="emoji">📞</span> Telefon der Klinik</label>
+                            <input type="tel" class="form-input" id="hospitalPhone" placeholder="z.B. 030 12345678" value="${state.profile.hospitalPhone}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><span class="emoji">👤</span> Notfallkontakt</label>
+                            <input type="text" class="form-input" id="emergencyContact" placeholder="Name und Telefon" value="${state.profile.emergencyContact}">
+                        </div>
+                    `
+                },
+                {
+                    emoji: '🎉',
+                    title: 'Alles bereit!',
+                    subtitle: 'Ihre persönliche OP-Vorbereitung kann beginnen.',
+                    content: `
+                        <div style="text-align: center; padding: 20px;">
+                            <div style="font-size: 4rem; margin-bottom: 20px;">🚀</div>
+                            <p style="color: var(--text-secondary); line-height: 1.6;">
+                                Wir haben eine Timeline mit wichtigen Aufgaben für Sie erstellt. 
+                                Sie können jederzeit Notizen hinzufügen und Ihren Fortschritt verfolgen.
+                            </p>
+                        </div>
+                    `
+                }
+            ];
+            
+            const step = steps[state.onboardingStep];
+            
+            return `
+                <div class="onboarding-screen">
+                    <div class="app-header">
+                        <div class="app-logo">
+                            <span>🏥</span>
+                            SurgeryPrep
+                        </div>
+                        <button class="theme-toggle" onclick="toggleTheme()">
+                            ${state.theme === 'light' ? '🌙' : '☀️'}
+                        </button>
+                    </div>
+                    <div class="onboarding-progress">
+                        ${steps.map((_, i) => `
+                            <div class="progress-dot ${i < state.onboardingStep ? 'completed' : ''} ${i === state.onboardingStep ? 'active' : ''}"></div>
+                        `).join('')}
+                    </div>
+                    <div class="onboarding-content">
+                        <div class="onboarding-hero">
+                            <div class="onboarding-emoji">${step.emoji}</div>
+                            <h1 class="onboarding-title">${step.title}</h1>
+                            <p class="onboarding-subtitle">${step.subtitle}</p>
+                        </div>
+                        ${step.content}
+                    </div>
+                    <div class="onboarding-nav">
+                        ${state.onboardingStep > 0 ? 
+                            '<button class="btn btn-secondary" onclick="prevOnboardingStep()">← Zurück</button>' : ''}
+                        <button class="btn btn-primary btn-block" onclick="nextOnboardingStep()" id="nextBtn">
+                            ${state.onboardingStep === steps.length - 1 ? 'Los geht\'s! 🎉' : 'Weiter →'}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCurrentScreen() {
+            switch(state.currentScreen) {
+                case 'dashboard': return renderDashboard();
+                case 'timeline': return renderTimeline();
+                case 'info': return renderInfo();
+                case 'warning': return renderWarning();
+                case 'documents': return renderDocuments();
+                case 'settings': return renderSettings();
+                default: return renderDashboard();
+            }
+        }
+
+        function renderDashboard() {
+            const daysUntil = getDaysUntilOp();
+            const opType = OP_TYPES[state.profile.opType];
+            const nextTasks = state.tasks
+                .filter(t => !t.completed)
+                .sort((a, b) => a.day - b.day)
+                .slice(0, 3);
+            
+            let countdownText = '';
+            let countdownUnit = '';
+            
+            if (daysUntil === null) {
+                countdownText = '?';
+                countdownUnit = 'Kein Datum';
+            } else if (daysUntil < 0) {
+                countdownText = Math.abs(daysUntil);
+                countdownUnit = 'Tage seit der OP';
+            } else if (daysUntil === 0) {
+                countdownText = '🎯';
+                countdownUnit = 'Heute ist OP-Tag!';
+            } else {
+                countdownText = daysUntil;
+                countdownUnit = daysUntil === 1 ? 'Tag bis zur OP' : 'Tage bis zur OP';
+            }
+            
+            return `
+                <div class="screen">
+                    <div class="dashboard-hero">
+                        <div class="countdown-label">${opType.emoji} ${opType.name}</div>
+                        <div class="countdown-value">${countdownText}</div>
+                        <div class="countdown-unit">${countdownUnit}</div>
+                        <div class="countdown-date">
+                            📅 ${formatDate(state.profile.opDate)}
+                        </div>
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <div class="quick-action" onclick="setState({currentScreen: 'timeline'})">
+                            <div class="quick-action-icon">📋</div>
+                            <div class="quick-action-label">Timeline</div>
+                        </div>
+                        <div class="quick-action" onclick="setState({currentScreen: 'info'})">
+                            <div class="quick-action-icon">ℹ️</div>
+                            <div class="quick-action-label">OP-Infos</div>
+                        </div>
+                        <div class="quick-action" onclick="setState({currentScreen: 'warning'})">
+                            <div class="quick-action-icon">⚠️</div>
+                            <div class="quick-action-label">Warnzeichen</div>
+                        </div>
+                        <div class="quick-action" onclick="setState({currentScreen: 'documents'})">
+                            <div class="quick-action-icon">📄</div>
+                            <div class="quick-action-label">Dokumente</div>
+                        </div>
+                    </div>
+                    
+                    <div class="section-header">
+                        <h2 class="section-title">📌 Nächste Aufgaben</h2>
+                        <span class="section-link" onclick="setState({currentScreen: 'timeline'})">Alle →</span>
+                    </div>
+                    
+                    <div class="task-preview">
+                        ${nextTasks.length ? nextTasks.map(task => {
+                            const isToday = task.day === -getDaysUntilOp();
+                            const isPast = task.day < -getDaysUntilOp();
+                            return `
+                                <div class="task-preview-item" onclick="setState({currentScreen: 'timeline'})">
+                                    <div class="task-day-badge ${isToday ? 'today' : ''} ${isPast ? 'past' : ''}">
+                                        ${task.day === 0 ? 'OP' : (task.day > 0 ? 'D+' + task.day : 'D' + task.day)}
+                                    </div>
+                                    <div class="task-preview-content">
+                                        <div class="task-preview-title">${task.title}</div>
+                                        <div class="task-preview-desc">${task.desc}</div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('') : `
+                            <div class="task-preview-item">
+                                <div class="task-preview-content" style="text-align: center; padding: 20px;">
+                                    <div style="font-size: 2rem; margin-bottom: 10px;">🎉</div>
+                                    <div class="task-preview-title">Alle Aufgaben erledigt!</div>
+                                </div>
+                            </div>
+                        `}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTimeline() {
+            const daysUntil = getDaysUntilOp();
+            const completedCount = state.tasks.filter(t => t.completed).length;
+            const totalCount = state.tasks.length;
+            const progress = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+            
+            // Group tasks by day
+            const groupedTasks = {};
+            state.tasks.forEach(task => {
+                if (!groupedTasks[task.day]) {
+                    groupedTasks[task.day] = [];
+                }
+                groupedTasks[task.day].push(task);
+            });
+            
+            const sortedDays = Object.keys(groupedTasks).map(Number).sort((a, b) => a - b);
+            
+            const getDayLabel = (day) => {
+                if (day === 0) return '🎯 OP-Tag';
+                if (day > 0) return `D+${day} (Nach der OP)`;
+                return `D${day} (${Math.abs(day)} ${Math.abs(day) === 1 ? 'Tag' : 'Tage'} vorher)`;
+            };
+            
+            return `
+                <div class="screen">
+                    <div class="section-header">
+                        <h1 class="section-title">📋 Ihre Timeline</h1>
+                    </div>
+                    
+                    <div class="timeline-header">
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-label">
+                                <span>Fortschritt</span>
+                                <span>${completedCount} / ${totalCount} (${progress}%)</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" style="width: ${progress}%"></div>
+                            </div>
+                        </div>
+                        <div class="filter-tabs">
+                            <button class="filter-tab active" data-filter="all">Alle</button>
+                            <button class="filter-tab" data-filter="open">Offen</button>
+                            <button class="filter-tab" data-filter="done">Erledigt</button>
+                        </div>
+                    </div>
+                    
+                    ${daysUntil !== null && daysUntil <= 1 && daysUntil >= 0 ? `
+                        <div class="fasting-reminder">
+                            <div class="fasting-title">
+                                🚫 Nüchternheit beachten!
+                            </div>
+                            <div class="fasting-rules">
+                                <div class="fasting-rule">
+                                    <div class="fasting-icon">🍽️</div>
+                                    <div class="fasting-text">
+                                        <strong>8 Stunden vor der OP</strong>
+                                        <span>Nichts mehr essen (keine feste Nahrung)</span>
+                                    </div>
+                                </div>
+                                <div class="fasting-rule">
+                                    <div class="fasting-icon">💧</div>
+                                    <div class="fasting-text">
+                                        <strong>2 Stunden vor der OP</strong>
+                                        <span>Nichts mehr trinken (auch kein Wasser)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="visual-timeline">
+                        <div class="timeline-line"></div>
+                        ${sortedDays.map(day => {
+                            const tasks = groupedTasks[day];
+                            const phaseDate = getDateForDay(day);
+                            const isToday = day === -daysUntil;
+                            const isOpDay = day === 0;
+                            const isPast = daysUntil !== null && day < -daysUntil;
+                            const allCompleted = tasks.every(t => t.completed);
+                            
+                            return `
+                                <div class="timeline-phase">
+                                    <div class="timeline-phase-header">
+                                        <div class="timeline-dot ${isToday ? 'today' : ''} ${isOpDay ? 'op-day' : ''} ${allCompleted && !isOpDay ? 'completed' : ''}"></div>
+                                        <div>
+                                            <div class="phase-label">
+                                                ${getDayLabel(day)}
+                                                ${isToday ? '<span style="background: var(--warning); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; margin-left: 8px;">HEUTE</span>' : ''}
+                                            </div>
+                                            <div class="phase-date">${phaseDate ? phaseDate.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' }) : ''}</div>
+                                        </div>
+                                    </div>
+                                    ${tasks.map(task => `
+                                        <div class="timeline-task ${task.completed ? 'completed' : ''}" data-task-id="${task.id}">
+                                            <div class="task-header">
+                                                <div class="task-checkbox ${task.completed ? 'checked' : ''}" onclick="toggleTask('${task.id}')">
+                                                    ${task.completed ? '✓' : ''}
+                                                </div>
+                                                <div class="task-content">
+                                                    <div class="task-title">${task.title}</div>
+                                                    <div class="task-description">${task.desc}</div>
+                                                    ${task.note ? `<div class="task-note">📝 ${task.note}</div>` : ''}
+                                                    <button class="add-note-btn" onclick="showNoteInput('${task.id}')">
+                                                        ${task.note ? '✏️ Notiz bearbeiten' : '➕ Notiz hinzufügen'}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderInfo() {
+            const opType = state.profile.opType;
+            const info = OP_INFO[opType] || OP_INFO.general;
+            const opTypeData = OP_TYPES[opType];
+            
+            return `
+                <div class="screen">
+                    <div class="section-header">
+                        <h1 class="section-title">${opTypeData.emoji} ${opTypeData.name}</h1>
+                    </div>
+                    
+                    <div class="info-tabs">
+                        <button class="info-tab active" data-tab="ablauf">Ablauf</button>
+                        <button class="info-tab" data-tab="vorbereitung">Vorbereitung</button>
+                        <button class="info-tab" data-tab="nachsorge">Nach der OP</button>
+                        <button class="info-tab" data-tab="fragen">Häufige Fragen</button>
+                    </div>
+                    
+                    <div class="info-content" id="infoContent">
+                        <div class="info-section" data-content="ablauf">
+                            <h3>🔄 So läuft die OP ab</h3>
+                            <ul class="info-list">
+                                ${info.ablauf.map(item => `<li>${item}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="info-section hidden" data-content="vorbereitung">
+                            <h3>✅ Vorbereitung</h3>
+                            <ul class="info-list">
+                                ${info.vorbereitung.map(item => `<li>${item}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="info-section hidden" data-content="nachsorge">
+                            <h3>🏠 Nach der OP</h3>
+                            <ul class="info-list">
+                                ${info.nachsorge.map(item => `<li>${item}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="info-section hidden" data-content="fragen">
+                            <h3>❓ Häufige Fragen</h3>
+                            ${info.fragen.map(faq => `
+                                <div style="margin-bottom: 16px;">
+                                    <strong style="display: block; margin-bottom: 6px;">${faq.q}</strong>
+                                    <p style="color: var(--text-secondary); line-height: 1.5;">${faq.a}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="info-disclaimer">
+                        <div class="info-disclaimer-icon">ℹ️</div>
+                        <div>
+                            <strong>Wichtig:</strong> Diese Informationen sind allgemein gehalten. 
+                            Folgen Sie immer den spezifischen Anweisungen Ihres Behandlungsteams.
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderWarning() {
+            return `
+                <div class="screen">
+                    <div class="section-header">
+                        <h1 class="section-title">⚠️ Warnzeichen</h1>
+                    </div>
+                    
+                    <div class="emergency-banner">
+                        <div class="emergency-title">
+                            🚨 Notfall?
+                        </div>
+                        <p>Bei lebensbedrohlichen Symptomen sofort den Notruf wählen!</p>
+                        <a href="tel:112" class="emergency-btn">
+                            📞 112 anrufen
+                        </a>
+                    </div>
+                    
+                    <p style="color: var(--text-secondary); margin-bottom: 16px; line-height: 1.6;">
+                        Kontaktieren Sie Ihre Klinik oder einen Arzt, wenn Sie eines dieser Zeichen bemerken:
+                    </p>
+                    
+                    ${WARNING_SIGNS.map(sign => `
+                        <div class="warning-card">
+                            <div class="warning-icon">${sign.icon}</div>
+                            <div class="warning-content">
+                                <h4>${sign.title}</h4>
+                                <p>${sign.desc}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                    
+                    ${state.profile.hospitalPhone ? `
+                        <a href="tel:${state.profile.hospitalPhone}" class="clinic-call-btn">
+                            📞 ${state.profile.hospitalName || 'Klinik'} anrufen
+                        </a>
+                    ` : `
+                        <div class="storage-info" style="margin-top: 20px;">
+                            <div class="storage-info-icon">💡</div>
+                            <p>Tipp: Speichern Sie die Telefonnummer Ihrer Klinik in den Einstellungen, um sie hier schnell anrufen zu können.</p>
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        function renderDocuments() {
+            return `
+                <div class="screen">
+                    <div class="section-header">
+                        <h1 class="section-title">📄 Dokumente & Packliste</h1>
+                    </div>
+                    
+                    <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                        Haken Sie ab, was Sie bereits vorbereitet haben:
+                    </p>
+                    
+                    <div class="document-section">
+                        <div class="document-card">
+                            ${DOCUMENTS_CHECKLIST.map(doc => `
+                                <div class="document-item ${state.documents.includes(doc.id) ? 'checked' : ''}" onclick="toggleDocument('${doc.id}')">
+                                    <div class="document-checkbox">
+                                        ${state.documents.includes(doc.id) ? '✓' : ''}
+                                    </div>
+                                    <div class="document-icon">${doc.icon}</div>
+                                    <div class="document-label">${doc.label}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-secondary btn-block print-btn" onclick="window.print()">
+                        🖨️ Checkliste drucken
+                    </button>
+                    
+                    <div class="storage-info">
+                        <div class="storage-info-icon">ℹ️</div>
+                        <p>Diese Liste ist ein allgemeiner Vorschlag. Ihr Krankenhaus kann zusätzliche oder andere Dinge verlangen.</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSettings() {
+            return `
+                <div class="screen">
+                    <div class="section-header">
+                        <h1 class="section-title">⚙️ Einstellungen</h1>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3 style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">OP-Daten</h3>
+                        <div class="settings-card">
+                            <div class="settings-item">
+                                <div class="settings-label">
+                                    <div class="settings-icon">📅</div>
+                                    <div class="settings-text">
+                                        <h4>OP-Datum</h4>
+                                        <p>${formatDate(state.profile.opDate) || 'Nicht festgelegt'}</p>
+                                    </div>
+                                </div>
+                                <button class="btn btn-secondary" style="padding: 8px 16px;" onclick="showDateChangeModal()">Ändern</button>
+                            </div>
+                            <div class="settings-item">
+                                <div class="settings-label">
+                                    <div class="settings-icon">${OP_TYPES[state.profile.opType].emoji}</div>
+                                    <div class="settings-text">
+                                        <h4>OP-Typ</h4>
+                                        <p>${OP_TYPES[state.profile.opType].name}</p>
+                                    </div>
+                                </div>
+                                <button class="btn btn-secondary" style="padding: 8px 16px;" onclick="showTypeChangeModal()">Ändern</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3 style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">Kontakt</h3>
+                        <div class="settings-card">
+                            <div class="settings-item">
+                                <div class="settings-label">
+                                    <div class="settings-icon">🏥</div>
+                                    <div class="settings-text">
+                                        <h4>Krankenhaus</h4>
+                                        <p>${state.profile.hospitalName || 'Nicht angegeben'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="settings-item">
+                                <div class="settings-label">
+                                    <div class="settings-icon">📞</div>
+                                    <div class="settings-text">
+                                        <h4>Klinik-Telefon</h4>
+                                        <p>${state.profile.hospitalPhone || 'Nicht angegeben'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="settings-item">
+                                <div class="settings-label">
+                                    <div class="settings-icon">👤</div>
+                                    <div class="settings-text">
+                                        <h4>Notfallkontakt</h4>
+                                        <p>${state.profile.emergencyContact || 'Nicht angegeben'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3 style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">Darstellung</h3>
+                        <div class="settings-card">
+                            <div class="settings-item">
+                                <div class="settings-label">
+                                    <div class="settings-icon">${state.theme === 'dark' ? '🌙' : '☀️'}</div>
+                                    <div class="settings-text">
+                                        <h4>Dunkler Modus</h4>
+                                        <p>Für weniger Augenbelastung</p>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" ${state.theme === 'dark' ? 'checked' : ''} onchange="toggleTheme()">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3 style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">Daten</h3>
+                        <div class="settings-card">
+                            <div class="settings-item" style="flex-direction: column; align-items: stretch;">
+                                <button class="btn btn-danger btn-block" onclick="confirmReset()">
+                                    🗑️ Alle Daten löschen
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="storage-info">
+                        <div class="storage-info-icon">🔒</div>
+                        <p>Alle Ihre Daten werden ausschließlich lokal auf diesem Gerät gespeichert. 
+                        Es werden keine Daten an Server übertragen. Beim Löschen der Browser-Daten 
+                        gehen auch diese Informationen verloren.</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderBottomNav() {
+            const navItems = [
+                { id: 'dashboard', icon: '🏠', label: 'Start' },
+                { id: 'timeline', icon: '📋', label: 'Timeline' },
+                { id: 'info', icon: 'ℹ️', label: 'OP-Info' },
+                { id: 'warning', icon: '⚠️', label: 'Warnung' },
+                { id: 'settings', icon: '⚙️', label: 'Mehr' }
+            ];
+            
+            return `
+                <nav class="bottom-nav">
+                    ${navItems.map(item => `
+                        <button class="nav-item ${state.currentScreen === item.id ? 'active' : ''}" 
+                                onclick="setState({currentScreen: '${item.id}'})"
+                                aria-label="${item.label}">
+                            <span class="nav-icon">${item.icon}</span>
+                            <span class="nav-label">${item.label}</span>
+                        </button>
+                    `).join('')}
+                </nav>
+            `;
+        }
+
+        // ========== EVENT HANDLERS ==========
+        function attachEventListeners() {
+            // Onboarding inputs
+            document.querySelectorAll('#disclaimer, #privacy').forEach(el => {
+                el?.addEventListener('change', (e) => {
+                    const profile = { ...state.profile };
+                    if (e.target.id === 'disclaimer') profile.disclaimerAccepted = e.target.checked;
+                    if (e.target.id === 'privacy') profile.privacyAccepted = e.target.checked;
+                    setState({ profile });
+                });
+            });
+            
+            document.getElementById('opDate')?.addEventListener('change', (e) => {
+                setState({ profile: { ...state.profile, opDate: e.target.value } });
+            });
+            
+            document.getElementById('opType')?.addEventListener('change', (e) => {
+                setState({ profile: { ...state.profile, opType: e.target.value } });
+            });
+            
+            document.getElementById('hospitalName')?.addEventListener('input', (e) => {
+                state.profile.hospitalName = e.target.value;
+            });
+            
+            document.getElementById('hospitalPhone')?.addEventListener('input', (e) => {
+                state.profile.hospitalPhone = e.target.value;
+            });
+            
+            document.getElementById('emergencyContact')?.addEventListener('input', (e) => {
+                state.profile.emergencyContact = e.target.value;
+            });
+            
+            // Info tabs
+            document.querySelectorAll('.info-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    const tabName = e.target.dataset.tab;
+                    document.querySelectorAll('.info-tab').forEach(t => t.classList.remove('active'));
+                    e.target.classList.add('active');
+                    document.querySelectorAll('.info-section').forEach(s => s.classList.add('hidden'));
+                    document.querySelector(`[data-content="${tabName}"]`)?.classList.remove('hidden');
+                });
+            });
+            
+            // Filter tabs
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    const filter = e.target.dataset.filter;
+                    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                    e.target.classList.add('active');
+                    
+                    document.querySelectorAll('.timeline-task').forEach(task => {
+                        const isCompleted = task.classList.contains('completed');
+                        if (filter === 'all') {
+                            task.style.display = '';
+                        } else if (filter === 'open') {
+                            task.style.display = isCompleted ? 'none' : '';
+                        } else if (filter === 'done') {
+                            task.style.display = isCompleted ? '' : 'none';
+                        }
+                    });
+                });
+            });
+
+            // Drag and drop for upload areas
+            document.querySelectorAll('.upload-area').forEach(area => {
+                area.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    area.classList.add('dragover');
+                });
+                area.addEventListener('dragleave', () => {
+                    area.classList.remove('dragover');
+                });
+                area.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    area.classList.remove('dragover');
+                });
+            });
+        }
+
+        function nextOnboardingStep() {
+            const step = state.onboardingStep;
+            
+            if (step === 0) {
+                if (!state.profile.disclaimerAccepted || !state.profile.privacyAccepted) {
+                    showToast('Bitte akzeptieren Sie beide Hinweise');
+                    return;
+                }
+            }
+            
+            if (step === 1) {
+                if (!state.profile.opDate) {
+                    showToast('Bitte wählen Sie ein OP-Datum');
+                    return;
+                }
+            }
+            
+            if (step === 2) {
+                const hospitalName = document.getElementById('hospitalName')?.value || '';
+                const hospitalPhone = document.getElementById('hospitalPhone')?.value || '';
+                const emergencyContact = document.getElementById('emergencyContact')?.value || '';
+                setState({ 
+                    profile: { 
+                        ...state.profile, 
+                        hospitalName, 
+                        hospitalPhone, 
+                        emergencyContact 
+                    } 
+                });
+            }
+            
+            if (step === 3) {
+                const tasks = generateTasks();
+                setState({ 
+                    setupComplete: true, 
+                    currentScreen: 'dashboard',
+                    tasks 
+                });
+                showToast('Willkommen! 🎉');
+                return;
+            }
+            
+            setState({ onboardingStep: step + 1 });
+        }
+
+        function prevOnboardingStep() {
+            if (state.onboardingStep > 0) {
+                setState({ onboardingStep: state.onboardingStep - 1 });
+            }
+        }
+
+        function showNoteInput(taskId) {
+            const task = state.tasks.find(t => t.id === taskId);
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal">
+                    <div class="modal-header">
+                        <h2 class="modal-title">📝 Notiz</h2>
+                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+                    </div>
+                    <textarea class="form-textarea" id="noteInput" rows="4" placeholder="Ihre Notiz...">${task?.note || ''}</textarea>
+                    <button class="btn btn-primary btn-block" style="margin-top: 16px;" onclick="saveNote('${taskId}')">
+                        Speichern
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.getElementById('noteInput').focus();
+        }
+
+        function saveNote(taskId) {
+            const note = document.getElementById('noteInput').value;
+            updateTaskNote(taskId, note);
+            document.querySelector('.modal-overlay').remove();
+            showToast('Notiz gespeichert ✓');
+        }
+
+        function showDateChangeModal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal">
+                    <div class="modal-header">
+                        <h2 class="modal-title">📅 OP-Datum ändern</h2>
+                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Neues Datum</label>
+                        <input type="date" class="form-input" id="newOpDate" value="${state.profile.opDate}" min="${new Date().toISOString().split('T')[0]}">
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 16px;">
+                        Ihre Timeline wird neu berechnet. Bereits erledigte Aufgaben bleiben erhalten.
+                    </p>
+                    <button class="btn btn-primary btn-block" onclick="changeOpDate()">
+                        Datum aktualisieren
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function changeOpDate() {
+            const newDate = document.getElementById('newOpDate').value;
+            if (!newDate) {
+                showToast('Bitte wählen Sie ein Datum');
+                return;
+            }
+            setState({ profile: { ...state.profile, opDate: newDate } });
+            document.querySelector('.modal-overlay').remove();
+            showToast('OP-Datum aktualisiert ✓');
+        }
+
+        function showTypeChangeModal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal">
+                    <div class="modal-header">
+                        <h2 class="modal-title">🏥 OP-Typ ändern</h2>
+                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Neuer OP-Typ</label>
+                        <select class="form-select" id="newOpType">
+                            ${Object.entries(OP_TYPES).map(([key, val]) => 
+                                `<option value="${key}" ${state.profile.opType === key ? 'selected' : ''}>${val.emoji} ${val.name}</option>`
+                            ).join('')}
+                        </select>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 16px;">
+                        ⚠️ Bei Änderung des OP-Typs wird Ihre Timeline zurückgesetzt.
+                    </p>
+                    <button class="btn btn-primary btn-block" onclick="changeOpType()">
+                        OP-Typ ändern
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function changeOpType() {
+            const newType = document.getElementById('newOpType').value;
+            const profile = { ...state.profile, opType: newType };
+            setState({ profile, tasks: [] });
+            const tasks = generateTasks();
+            setState({ tasks });
+            document.querySelector('.modal-overlay').remove();
+            showToast('OP-Typ geändert ✓');
+        }
+
+        function confirmReset() {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal">
+                    <div class="modal-header">
+                        <h2 class="modal-title">🗑️ Daten löschen</h2>
+                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+                    </div>
+                    <p style="color: var(--text-secondary); margin-bottom: 20px; line-height: 1.6;">
+                        Möchten Sie wirklich alle Daten löschen? Diese Aktion kann nicht rückgängig gemacht werden.
+                        <br><br>
+                        Das umfasst: Fotos, Sprachmemos, Messwerte und alle Einstellungen.
+                    </p>
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn btn-secondary" style="flex: 1;" onclick="this.closest('.modal-overlay').remove()">
+                            Abbrechen
+                        </button>
+                        <button class="btn btn-danger" style="flex: 1;" onclick="resetApp()">
+                            Löschen
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function resetApp() {
+            localStorage.removeItem(APP_KEY);
+            state = { ...DEFAULT_STATE };
+            document.querySelector('.modal-overlay')?.remove();
+            showToast('Alle Daten gelöscht');
+            render();
+        }
+
+        // ========== INIT ==========
+        document.addEventListener('DOMContentLoaded', () => {
+            render();
+        });
+
+        // Make functions global
+        window.toggleTheme = toggleTheme;
+        window.toggleTask = toggleTask;
+        window.toggleDocument = toggleDocument;
+        window.setState = setState;
+        window.nextOnboardingStep = nextOnboardingStep;
+        window.prevOnboardingStep = prevOnboardingStep;
+        window.showNoteInput = showNoteInput;
+        window.saveNote = saveNote;
+        window.showDateChangeModal = showDateChangeModal;
+        window.changeOpDate = changeOpDate;
+        window.showTypeChangeModal = showTypeChangeModal;
+        window.changeOpType = changeOpType;
+        window.confirmReset = confirmReset;
+        window.resetApp = resetApp;
+        window.handlePhotoUpload = handlePhotoUpload;
+        window.deletePhoto = deletePhoto;
+        window.showPhotoViewer = showPhotoViewer;
+        window.startVoiceRecording = startVoiceRecording;
+        window.stopVoiceRecording = stopVoiceRecording;
+        window.playVoiceMemo = playVoiceMemo;
+        window.deleteVoiceMemo = deleteVoiceMemo;
+        window.startSpeechRecognition = startSpeechRecognition;
+        window.stopSpeechRecognition = stopSpeechRecognition;
+        window.deleteTranscript = deleteTranscript;
+        window.savePainRecord = savePainRecord;
+        window.saveVitals = saveVitals;
+        window.saveMedication = saveMedication;
+    </script>
+</body>
+</html>Accepted = e.target.checked;
+                    if (e.target.id === 'privacy') profile.privacyAccepted = e.target.checked;
+                    setState({ profile });
+                });
+            });
+            
+            document.getElementById('opDate')?.addEventListener('change', (e) => {
+                setState({ profile: { ...state.profile, opDate: e.target.value } });
+            });
+            
+            document.getElementById('opType')?.addEventListener('change', (e) => {
+                setState({ profile: { ...state.profile, opType: e.target.value } });
+            });
+            
+            document.getElementById('hospitalName')?.addEventListener('input', (e) => {
+                state.profile.hospitalName = e.target.value;
+            });
+            
+            document.getElementById('hospitalPhone')?.addEventListener('input', (e) => {
+                state.profile.hospitalPhone = e.target.value;
+            });
+            
+            document.getElementById('emergencyContact')?.addEventListener('input', (e) => {
+                state.profile.emergencyContact = e.target.value;
+            });
+            
+            // Info tabs
+            document.querySelectorAll('.info-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    const tabName = e.target.dataset.tab;
+                    document.querySelectorAll('.info-tab').forEach(t => t.classList.remove('active'));
+                    e.target.classList.add('active');
+                    document.querySelectorAll('.info-section').forEach(s => s.classList.add('hidden'));
+                    document.querySelector(`[data-content="${tabName}"]`)?.classList.remove('hidden');
+                });
+            });
+            
+            // Filter tabs
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    const filter = e.target.dataset.filter;
+                    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                    e.target.classList.add('active');
+                    
+                    document.querySelectorAll('.timeline-task').forEach(task => {
+                        const isCompleted = task.classList.contains('completed');
+                        if (filter === 'all') {
+                            task.style.display = '';
+                        } else if (filter === 'open') {
+                            task.style.display = isCompleted ? 'none' : '';
+                        } else if (filter === 'done') {
+                            task.style.display = isCompleted ? '' : 'none';
+                        }
+                    });
+                });
+            });
+        }
+
+        function nextOnboardingStep() {
+            const step = state.onboardingStep;
+            
+            // Validation
+            if (step === 0) {
+                if (!state.profile.disclaimerAccepted || !state.profile.privacyAccepted) {
+                    showToast('Bitte akzeptieren Sie beide Hinweise');
+                    return;
+                }
+            }
+            
+            if (step === 1) {
+                if (!state.profile.opDate) {
+                    showToast('Bitte wählen Sie ein OP-Datum');
+                    return;
+                }
+            }
+            
+            if (step === 2) {
+                // Save optional contact info
+                const hospitalName = document.getElementById('hospitalName')?.value || '';
+                const hospitalPhone = document.getElementById('hospitalPhone')?.value || '';
+                const emergencyContact = document.getElementById('emergencyContact')?.value || '';
+                setState({ 
+                    profile: { 
+                        ...state.profile, 
+                        hospitalName, 
+                        hospitalPhone, 
+                        emergencyContact 
+                    } 
+                });
+            }
+            
+            if (step === 3) {
+                // Complete setup
+                const tasks = generateTasks();
+                setState({ 
+                    setupComplete: true, 
+                    currentScreen: 'dashboard',
+                    tasks 
+                });
+                showToast('Willkommen! 🎉');
+                return;
+            }
+            
+            setState({ onboardingStep: step + 1 });
+        }
+
+        function prevOnboardingStep() {
+            if (state.onboardingStep > 0) {
+                setState({ onboardingStep: state.onboardingStep - 1 });
+            }
+        }
+
+        function showNoteInput(taskId) {
+            const task = state.tasks.find(t => t.id === taskId);
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal">
+                    <div class="modal-header">
+                        <h2 class="modal-title">📝 Notiz</h2>
+                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+                    </div>
+                    <textarea class="task-note-input" id="noteInput" rows="4" placeholder="Ihre Notiz...">${task?.note || ''}</textarea>
+                    <button class="btn btn-primary btn-block" style="margin-top: 16px;" onclick="saveNote('${taskId}')">
+                        Speichern
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.getElementById('noteInput').focus();
+        }
+
+        function saveNote(taskId) {
+            const note = document.getElementById('noteInput').value;
+            updateTaskNote(taskId, note);
+            document.querySelector('.modal-overlay').remove();
+            showToast('Notiz gespeichert ✓');
+        }
+
+        function showDateChangeModal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal">
+                    <div class="modal-header">
+                        <h2 class="modal-title">📅 OP-Datum ändern</h2>
+                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Neues Datum</label>
+                        <input type="date" class="form-input" id="newOpDate" value="${state.profile.opDate}" min="${new Date().toISOString().split('T')[0]}">
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 16px;">
+                        Ihre Timeline wird neu berechnet. Bereits erledigte Aufgaben bleiben erhalten.
+                    </p>
+                    <button class="btn btn-primary btn-block" onclick="changeOpDate()">
+                        Datum aktualisieren
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function changeOpDate() {
+            const newDate = document.getElementById('newOpDate').value;
+            if (!newDate) {
+                showToast('Bitte wählen Sie ein Datum');
+                return;
+            }
+            setState({ profile: { ...state.profile, opDate: newDate } });
+            document.querySelector('.modal-overlay').remove();
+            showToast('OP-Datum aktualisiert ✓');
+        }
+
+        function showTypeChangeModal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal">
+                    <div class="modal-header">
+                        <h2 class="modal-title">🏥 OP-Typ ändern</h2>
+                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Neuer OP-Typ</label>
+                        <select class="form-select" id="newOpType">
+                            ${Object.entries(OP_TYPES).map(([key, val]) => 
+                                `<option value="${key}" ${state.profile.opType === key ? 'selected' : ''}>${val.emoji} ${val.name}</option>`
+                            ).join('')}
+                        </select>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 16px;">
+                        ⚠️ Bei Änderung des OP-Typs wird Ihre Timeline zurückgesetzt.
+                    </p>
+                    <button class="btn btn-primary btn-block" onclick="changeOpType()">
+                        OP-Typ ändern
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function changeOpType() {
+            const newType = document.getElementById('newOpType').value;
+            const profile = { ...state.profile, opType: newType };
+            setState({ profile, tasks: [] });
+            const tasks = generateTasks();
+            setState({ tasks });
+            document.querySelector('.modal-overlay').remove();
+            showToast('OP-Typ geändert ✓');
+        }
+
+        function confirmReset() {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal">
+                    <div class="modal-header">
+                        <h2 class="modal-title">🗑️ Daten löschen</h2>
+                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+                    </div>
+                    <p style="color: var(--text-secondary); margin-bottom: 20px; line-height: 1.6;">
+                        Möchten Sie wirklich alle Daten löschen? Diese Aktion kann nicht rückgängig gemacht werden.
+                    </p>
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn btn-secondary" style="flex: 1;" onclick="this.closest('.modal-overlay').remove()">
+                            Abbrechen
+                        </button>
+                        <button class="btn btn-danger" style="flex: 1;" onclick="resetApp()">
+                            Löschen
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function resetApp() {
+            localStorage.removeItem(APP_KEY);
+            state = { ...DEFAULT_STATE };
+            document.querySelector('.modal-overlay')?.remove();
+            showToast('Alle Daten gelöscht');
+            render();
+        }
+
+        // ========== INIT ==========
+        document.addEventListener('DOMContentLoaded', () => {
+            render();
+        });
+
+        // Make functions global for inline handlers
+        window.toggleTheme = toggleTheme;
+        window.toggleTask = toggleTask;
+        window.toggleDocument = toggleDocument;
+        window.setState = setState;
+        window.nextOnboardingStep = nextOnboardingStep;
+        window.prevOnboardingStep = prevOnboardingStep;
+        window.showNoteInput = showNoteInput;
+        window.saveNote = saveNote;
+        window.showDateChangeModal = showDateChangeModal;
+        window.changeOpDate = changeOpDate;
+        window.showTypeChangeModal = showTypeChangeModal;
+        window.changeOpType = changeOpType;
+        window.confirmReset = confirmReset;
+        window.resetApp = resetApp;
+    </script>
+</body>
+</html>
